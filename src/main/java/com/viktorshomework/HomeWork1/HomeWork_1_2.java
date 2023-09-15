@@ -18,7 +18,7 @@ public static void main(String[] args){
             .town("Prague")
             .spz("AB-12-34-CD")
             .consume(BigDecimal.TEN)
-            .inetAddress("www.someAddress.someWhere")
+            .inetAddress("www.SomeAddress.SomeWhere")
             .build();
     System.out.println("Good Prodejce - "+goodProdejce);
     Prodejce badProdejce=new Prodejce.Builder().build();
