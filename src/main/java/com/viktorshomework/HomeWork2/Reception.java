@@ -58,16 +58,30 @@ public class Reception{
         booking.addToBook(order,guest);
         guest.addToBook(order);
     }
+    // many people by one order, mean many people with same period(with from and to) in one room
+    public void registerListOfGuestsByOneOrder(List<Guest> list, Order order) {
+        if(isOrderAlredyPresentInSystem(order)){
+            System.out.println("\u001B[31m"+ "I'm sorry, but this order already parallel prepared for another customers"+"\u001B[0m");
+            System.out.println("\u001B[36m"+ list+"  --  "+ order+"\u001B[0m");
+            return;
+        }
+        list.stream().forEach(g -> {
+            booking.addToBookWithMultipleGuestsInRoom(order,g);
+            g.addToBook(order);
+        });
+    }
     // not uses
     public List<Order> getOrdersByRoom(int i) {
         return roomToOrders.get(i);
     }
     public BiFunction<LocalDate, LocalDate, Predicate<Room>> isOrderedRoomInDate = 
-            (from,to) -> r -> isOrderAlredyPresentInSystem(new Order(r,from,to));
-//            (from,to) -> r -> true;
-//    public boolean isAvailableRoomInDates(Room room, LocalDate from, LocalDate to) {
-//        return isOrderAlredyPresentInSystem(new Order(room,from,to));
-//    }
+            (from,to) -> r -> isOrderAlredyPresentInSystem(new Order(r,from,to, 0));
+    public Predicate<Room> isOrderedRoomForRecreational = 
+            r -> booking.getBooking().values().stream()
+            .anyMatch(b -> (b.order().getRoom()==r && b.order().getHostedFor()==1));
+    public Predicate<Room> isOrderedRoomForWorking = 
+            r -> booking.getBooking().values().stream()
+            .anyMatch(b -> (b.order().getRoom()==r && b.order().getHostedFor()==2));
     // not uses
 //    private boolean isGuestInSystem(Guest guest) {
 //        return booking.getOrdersByGuest(guest).size()>0;

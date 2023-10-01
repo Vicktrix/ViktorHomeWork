@@ -11,12 +11,23 @@ public class Order{
     private final LocalDate to;
     private final Period period;
     private int numOrder;
-    public Order(Room room,LocalDate from,LocalDate to){
+    // code 1 - recreational, code 2 - working;
+    private int hostedFor;
+    public Order(Room room,LocalDate from,LocalDate to, int hostedFor){
+        this.hostedFor = hostedFor;
         this.room=room;
         this.from=from.isBefore(to)? from : to;
         this.to=to.isAfter(from)? to : from;
         this.numOrder = numberOfOrders++;
         this.period = this.from.until(this.to);
+    }
+
+    public int getHostedFor(){
+        return hostedFor;
+    }
+
+    public void setHostedFor(int hostedFor){
+        this.hostedFor=hostedFor;
     }
 
     public static int getNumberOfOrders(){
@@ -42,14 +53,18 @@ public class Order{
     public Period getPeriod(){
         return period;
     }
+    // for added multiple guests in one room in same time
+    // we created new order, 
+    //this method like clone with new numOrder and increase numberOfOrders
+    public Order numOrderAddedSameRoom() {
+        return new Order(this.room, this.from, this.to, this.hostedFor);
+    }
     
     @Override
     public int hashCode(){
-        // WRONG, 
         int hash=3;
         hash=71*hash+Objects.hashCode(this.room);
         return hash;
-//        return 1;
     }
 
     @Override

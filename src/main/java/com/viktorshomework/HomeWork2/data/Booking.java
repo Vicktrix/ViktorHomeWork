@@ -17,6 +17,10 @@ public class Booking{
     public void addToBook(Order order, Guest guest) {
         booking.put(order.getNumOrder(),new Book(order,guest));
     }
+    public void addToBookWithMultipleGuestsInRoom(Order order, Guest guest) {
+        Order newOrder = order.numOrderAddedSameRoom();
+        booking.put(newOrder.getNumOrder(),new Book(newOrder,guest));
+    }
     
     public Map<Integer,Book> getBooking(){
         return booking;

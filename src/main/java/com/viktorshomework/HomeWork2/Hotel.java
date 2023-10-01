@@ -69,8 +69,8 @@ public class Hotel{
         Order order;
         for(int i=1; i<=20; i++) {
             room = reception.rooms().getRoomByNum(i).get();
-//            order = new Order(room,now.plusDays(i), now.plusDays(i*3+5));
-            order = new Order(room,now.plusDays(i), now.plusDays(i*2+3));
+//            order = new Order(room,now.plusDays(i), now.plusDays(i*3+5), 1);
+            order = new Order(room,now.plusDays(i), now.plusDays(i*2+3), 1);
             reception.registerGuest(guests.get(randGuest.get()),order);
         }
 //        reception.rooms().getOrderedRoomInDate(now,now.plusWeeks(3),reception.isOrderedRoomInDate)
@@ -78,23 +78,35 @@ public class Hotel{
 //        reception.rooms().getFreeRoomInDate(now.plusWeeks(2),now.plusWeeks(4),reception.isOrderedRoomInDate)
 //        reception.rooms().getFreeRoomInDate(now.plusDays(7),now.plusDays(22),reception.isOrderedRoomInDate)
                 .forEach(System.out::println);
-        
-        System.out.println("\n\t------- CHECK ---------\n");
-        
+        final long count=reception.rooms().getOrderedRoomInDate(now.plusDays(5),now.plusDays(17),reception.isOrderedRoomInDate).count();
+        System.out.println("Number of rezervation room in these "+count);
+        System.out.println("Show rezervation room near year ");
+        reception.rooms().getOrderedRoomAtNearYear(reception.isOrderedRoomInDate).forEach(System.out::println);
+        System.out.println("\n\t------- CHECK ONE ---------\n");
         printReceptionOrdersAndGuestsOrders(reception);
+        cleanReceptionAndGuestsBooking(reception);
+        
+        System.out.println("\n\t------- CHECK TWO ---------\n");
+        testManyGuestsToOneOrder(reception);
+        printReceptionOrdersAndGuestsOrders(reception);
+        
         
         System.out.println("\n\t--COMBINE--\n");
         
         reception
                 .rooms()
-                .byBedsLessThan(4)
-                .byBedsMoreThan(0)
-                .byCostsMoreThan(300)
+                .byBedsLessThan(5)
+                .byBedsMoreThan(1)
+                .byCostsMoreThan(550)
+                .byCostsLessThan(750)
                 .withViewOfSee(true)
                 .sortByInreaseCost()
                 .getFreeRoomInDate(now,now.plusMonths(2),reception.isOrderedRoomInDate)
                 .forEach(System.out::println);
         
+        System.out.println("\n\t------- CHECK Three ---------\n");
+        System.out.println("\n\t------- Recreational and working orders ---------\n");
+        testRecreationalFilter(reception);
     }
     public static void printReceptionOrdersAndGuestsOrders(Reception reception) {
         System.out.println("\n\t\tReception Orders : ");
@@ -119,7 +131,7 @@ public class Hotel{
         Room room;
         for(int i=0,j=0; i<10; i++, j+=4) {
             room = rooms.get(randRooms.get());
-            order = new Order(room,now.plusDays(j),now.plusDays(j+3));
+            order = new Order(room,now.plusDays(j),now.plusDays(j+3), 1);
             reception.registerGuest(guest,order);
         }
     }
@@ -130,7 +142,7 @@ public class Hotel{
         Room room;
         for(int i=0; i<10; i++) {
             room = rooms.get(randRooms.get());
-            order = new Order(room,now.plusDays(i+1),now.plusDays(i+3));
+            order = new Order(room,now.plusDays(i+1),now.plusDays(i+3), 1);
             reception.registerGuest(guest,order);
         }
     }
@@ -140,7 +152,7 @@ public class Hotel{
         Order order;
         Room room = rooms.get(randRooms.get());
         for(int i=0,j=0; i<10; i++, j+=4) {
-            order = new Order(room,now.plusDays(j),now.plusDays(j+3));
+            order = new Order(room,now.plusDays(j),now.plusDays(j+3), 1);
             reception.registerGuest(guest,order);
         }
     }
@@ -150,7 +162,7 @@ public class Hotel{
         Room room = rooms.get(randRooms.get());
         Order order;
         for(int i=0; i<10; i++) {
-            order = new Order(room,now.plusDays(i+1),now.plusDays(i+3));
+            order = new Order(room,now.plusDays(i+1),now.plusDays(i+3), 1);
             reception.registerGuest(guest,order);
         }
     }
@@ -160,7 +172,7 @@ public class Hotel{
         Room room;
         for(int i=0,j=0; i<10; i++, j+=4) {
             room = rooms.get(randRooms.get());
-            order = new Order(room,now.plusDays(j),now.plusDays(j+3));
+            order = new Order(room,now.plusDays(j),now.plusDays(j+3), 1);
             reception.registerGuest(guests.get(i),order);
         }
     }
@@ -170,7 +182,7 @@ public class Hotel{
         Room room;
         for(int i=0; i<10; i++) {
             room = rooms.get(randRooms.get());
-            order = new Order(room,now.plusDays(i),now.plusDays(i+3));
+            order = new Order(room,now.plusDays(i),now.plusDays(i+3), 1);
             reception.registerGuest(guests.get(i),order);
         }
     }
@@ -179,7 +191,7 @@ public class Hotel{
         Order order;
         Room room = rooms.get(randRooms.get());
         for(int i=0,j=0; i<10; i++, j+=4) {
-            order = new Order(room,now.plusDays(j),now.plusDays(j+3));
+            order = new Order(room,now.plusDays(j),now.plusDays(j+3), 1);
             reception.registerGuest(guests.get(i),order);
         }
     }
@@ -188,8 +200,44 @@ public class Hotel{
         Room room = rooms.get(randRooms.get());
         Order order;
         for(int i=0; i<10; i++) {
-            order = new Order(room,now.plusDays(i),now.plusDays(i+3));
+            order = new Order(room,now.plusDays(i),now.plusDays(i+3), 1);
             reception.registerGuest(guests.get(i),order);
         }
     }
+    //   ------------------------------------------------------
+    public static void testManyGuestsToOneOrder(Reception reception) {
+        Room room;
+        Order order;
+        Supplier<Boolean> suffle = () -> ThreadLocalRandom.current().nextBoolean();
+        Supplier<Integer> randNumGuest = () -> ThreadLocalRandom.current().nextInt(2,5);
+        List<Guest> listOfGuest;
+        for(int i=0; i<10; i++) {
+            room = reception.rooms().getRoomByNum(randRooms.get()+1).get();
+            order = new Order(room,now.plusWeeks(1),now.plusWeeks(2), 1);
+            listOfGuest = guests.stream().limit(randNumGuest.get())
+                    .sorted((a,b) -> suffle.get()? 1 : -1).toList();
+            reception.registerListOfGuestsByOneOrder(listOfGuest,order);
+        }
+    }
+    
+    public static void testRecreationalFilter(Reception reception) {
+        System.out.println("\n\t--------  testRecreationalFilter  ----------\n");
+        cleanReceptionAndGuestsBooking(reception);
+        Room room;
+        Order order;
+        int recreatinal =1;
+        for(int i=1; i<=50; i++) {
+            recreatinal = (i>=30 || i%10==0)? 2 : 1;
+            room = reception.rooms().getRoomByNum(i).get();
+            order = new Order(room,now.plusDays(i), now.plusDays(i*2+3), recreatinal);
+            reception.registerGuest(guests.get(randGuest.get()),order);
+        }
+        System.out.println("\n Show all ordered room \n");
+        reception.rooms().getOrderedRoomAtNearYear(reception.isOrderedRoomInDate).forEach(System.out::println);
+        System.out.println("\n Show all recreational room-orders \n");
+        reception.rooms().getHostedForRecreationalRoom(reception.isOrderedRoomForRecreational).forEach(System.out::println);
+        System.out.println("\n Show all working room-orders \n");
+        reception.rooms().getHostedForWorkingRoom(reception.isOrderedRoomForWorking).forEach(System.out::println);
+    }
+    
 }

@@ -69,6 +69,18 @@ public class StreamOfRooms<T> implements Stream<T> {
     public StreamOfRooms<T> getFreeRoomInDate(LocalDate from, LocalDate to, BiFunction<LocalDate, LocalDate, Predicate<Room>> p) {
         return this.filter(r -> !p.apply(from,to).test((Room)r));
     }
+    public StreamOfRooms<T> getOrderedRoomAtNearYear(BiFunction<LocalDate, LocalDate, Predicate<Room>> p) {
+        return this.filter(r -> p.apply(LocalDate.now().minusDays(1),LocalDate.now().plusYears(1)).test((Room)r));
+    }
+    public StreamOfRooms<T> getFreeRoomAtNearYear(BiFunction<LocalDate, LocalDate, Predicate<Room>> p) {
+        return this.filter(r -> !p.apply(LocalDate.now().minusDays(1),LocalDate.now().plusYears(1)).test((Room)r));
+    }
+    public StreamOfRooms<T> getHostedForRecreationalRoom(Predicate<Room> p) {
+        return this.filter(r -> p.test((Room)r));
+    }
+    public StreamOfRooms<T> getHostedForWorkingRoom(Predicate<Room> p) {
+        return this.filter(r -> p.test((Room)r));
+    }
     @Override
     public StreamOfRooms<T> filter(Predicate<? super T> predicate){
         return new StreamOfRooms<>(delegate.filter(predicate));
